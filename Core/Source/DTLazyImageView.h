@@ -26,7 +26,7 @@ extern NSString * const DTLazyImageViewDidFinishDownloadNotification;
  @param lazyImageView The image view
  @param size The image size that is now known
  */
-- (void)lazyImageView:(DTLazyImageView *)lazyImageView didChangeImageSize:(CGSize)size;
+- (void)lazyImageView:(DTLazyImageView *)lazyImageView didChangeImageSize:(CGSize)size andImageUrl:(NSURL *)url;
 @end
 
 /**
@@ -42,12 +42,16 @@ extern NSString * const DTLazyImageViewDidFinishDownloadNotification;
 /**
  The URL of the remote image
  */
-@property (nonatomic, strong) NSURL *url;
+@property (nonatomic, strong) NSURL *url __attribute((deprecated(("use imageUrls insteads"))));
+
+@property (nonatomic, strong) NSDictionary *imageUrlsInfo;
 
 /**
  The URL Request that is to be used for downloading the image. If this is left `nil` the a new URL Request will be created
  */
-@property (nonatomic, strong) NSMutableURLRequest *urlRequest;
+@property (nonatomic, strong) NSMutableURLRequest *urlRequest __attribute((deprecated(("use urlRequestsInfo insteads"))));
+
+@property (nonatomic, strong) NSMutableDictionary *urlRequestsInfo;
 
 /**
  The DTAttributedTextContentView used to display remote images with DTAttributedTextCell

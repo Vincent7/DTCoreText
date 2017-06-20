@@ -79,10 +79,13 @@ typedef NS_ENUM(NSUInteger, DTTextAttachmentVerticalAlignment)
 	CGSize _originalSize; // the original dimensions of the attachment
 	CGSize _maxImageSize; // the maximum dimensions to size to
 	NSURL *_contentURL;
+    NSString *_imageSizeIdentifer;
+    NSString *_imageURLIdentifer;
+    
+//    NSMutableDictionary *_contentURLsInfo;
 	NSDictionary *_attributes; // attributes transferred from HTML element
 	DTTextAttachmentVerticalAlignment _verticalAlignment; // alignment in relation to the baseline
 }
-
 /**
  @name Creating Text Attachments
  */
@@ -174,6 +177,10 @@ typedef NS_ENUM(NSUInteger, DTTextAttachmentVerticalAlignment)
  */
 @property (nonatomic, strong) NSDictionary *attributes;
 
+
+@property (nonatomic, strong) NSMutableDictionary *contentURLsInfo;
+@property (nonatomic, strong) NSString *imageURLIdentifer;
+@property (nonatomic, strong) NSString *imageSizeIdentifer;
 /**
  @name Customizing Attachments
  */

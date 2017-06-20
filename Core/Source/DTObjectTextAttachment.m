@@ -35,7 +35,9 @@
 		// get base URL
 		NSURL *baseURL = [options objectForKey:NSBaseURLDocumentOption];
 		NSString *src = [element.attributes objectForKey:@"src"];
-		
+        if (![src length]) {
+            src = [element.attributes objectForKey:@"data-src"];
+        }
 		// content URL
 		_contentURL = [NSURL URLWithString:src relativeToURL:baseURL];
 	}

@@ -44,7 +44,7 @@ extern unsigned int default_css_len;
 			// get the data from the external symbol
 			NSData *data = [NSData dataWithBytes:default_css length:default_css_len];
 			NSString *cssString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-			
+
 			defaultDTCSSStylesheet = [[DTCSSStylesheet alloc] initWithStyleBlock:cssString];
 		}
 	}
@@ -832,13 +832,13 @@ extern unsigned int default_css_len;
 	for (NSString *selector in _orderedSelectors)
 	{
 		// We only process the selector if our selector has more than 1 part to it (e.g. ".foo" would be skipped and ".foo .bar" would not)
-	        if (![selector rangeOfString:@" "].length) {
-        	    continue;
-	        }
-	        
+//	        if (![selector rangeOfString:@" "].length) {
+//        	    continue;
+//	        }
+        
 		NSArray *selectorParts = [selector componentsSeparatedByString:@" "];
 		
-		if (selectorParts.count < 2)
+		if (selectorParts.count < 2 /*&& ![selectorParts.firstObject isEqualToString:@"aspectRatioPlaceholder"]*/)
 		{
 			continue;
 		}

@@ -60,7 +60,7 @@ extern NSString * const DTWillFlushBlockCallBack;
 extern NSString * const DTProcessCustomHTMLAttributes;
 extern NSString * const DTIgnoreInlineStylesOption;
 extern NSString * const DTDocumentPreserveTrailingSpaces;
-
+extern NSString * const DTCoreTextCustomParagraphStyleInfo;
 
 // attributed string attribute constants
 
@@ -93,6 +93,75 @@ extern BOOL ___useiOS6Attributes;
 // exceptions
 extern NSString * const DTCoreTextFontDescriptorException;
 
+
+extern NSString * const TKSCustomParaStyleFirstLineHeadIndent;
+
+
+/**
+ The document-wide default tab interval.
+ 
+ The default tab interval in points. Tabs after the last specified in tabStops are placed at integer multiples of this distance (if positive). Default return value is 0.0.
+ */
+extern NSString * const TKSCustomParaStyleTabInterval;
+
+
+/**
+ The distance between the paragraph’s top and the beginning of its text content.
+ */
+extern NSString * const TKSCustomParaStyleParagraphSpacingBefore;
+
+
+/**
+ The space after the end of the paragraph.
+ */
+extern NSString * const TKSCustomParaStyleParagraphSpacing;
+
+
+/**
+ The line height multiple.
+ 
+ Internally line height multiples get converted into minimum and maximum line height.
+ */
+extern NSString * const TKSCustomParaStyleLineHeightMultiple;
+
+
+/**
+ The minimum height in points that any line in the receiver will occupy, regardless of the font size or size of any attached graphic. This value is always nonnegative.
+ */
+extern NSString * const TKSCustomParaStyleMinimumLineHeight;
+
+
+/**
+ The maximum height in points that any line in the receiver will occupy, regardless of the font size or size of any attached graphic. This value is always nonnegative. The default value is 0.
+ */
+extern NSString * const TKSCustomParaStyleMaximumLineHeight;
+
+
+/**
+ The distance in points from the margin of a text container to the end of lines.
+ 
+ @note This value is negative if it is to be measured from the trailing margin, positive if measured from the same margin as the headIndent.
+ */
+extern NSString * const TKSCustomParaStyleTailIndent;
+
+/**
+ The distance in points from the leading margin of a text container to the beginning of lines other than the first. This value is always nonnegative.
+ */
+extern NSString * const TKSCustomParaStyleHeadIndent;
+
+/**
+ The text alignment of the receiver.
+ 
+ Natural text alignment is realized as left or right alignment depending on the line sweep direction of the first script contained in the paragraph.
+ */
+extern NSString * const TKSCustomParaStyleAlignment;
+
+
+/**
+ The base writing direction for the receiver.
+ 
+ */
+extern NSString * const TKSCustomParaStyleBaseWritingDirection;
 // macros
 
 #define IS_WHITESPACE(_c) (_c == ' ' || _c == '\t' || _c == 0xA || _c == 0xB || _c == 0xC || _c == 0xD || _c == 0x85)

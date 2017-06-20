@@ -49,7 +49,7 @@
  @returns The `CTParagraphStyle` based on the receiver's attributes.
  */
 - (CTParagraphStyleRef)createCTParagraphStyle;
-
+- (CTParagraphStyleRef)createTestCTParagraphStyle;
 /**
  @name Bridging to and from NSParagraphStyle
  */

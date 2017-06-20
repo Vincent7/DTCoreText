@@ -257,7 +257,7 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 						// extend effective link range
 						effectiveRangeOfLink = NSUnionRange(effectiveRangeOfLink, followingRun.stringRange);
 					}
-					
+					 
 					// frame for link view includes for all joined glyph runs with same link in this line
 					frameForSubview = [oneLine frameOfGlyphsWithRange:effectiveRangeOfLink];
 					
@@ -273,7 +273,8 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 						// frame might be different due to image vertical alignment
 						CGFloat ascender = [attachment ascentForLayout];
 						CGFloat descender = [attachment descentForLayout];
-						
+                        
+                        
 						frameForSubview = CGRectMake(oneRun.frame.origin.x, oneLine.baselineOrigin.y - ascender, oneRun.frame.size.width, ascender+descender);
 					}
 					else
@@ -316,6 +317,12 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 					
 					if (existingAttachmentView)
 					{
+                        if ([existingAttachmentView isKindOfClass:[DTLazyImageView class]]) {
+                            if ((frameForSubview.origin.x + frameForSubview.size.width/2 - self.frame.size.width/2) < 0) {
+                                CGFloat xOffSet = self.frame.size.width/2 - frameForSubview.size.width/2;
+                                frameForSubview = CGRectMake(frameForSubview.origin.x + xOffSet, frameForSubview.origin.y, frameForSubview.size.width, frameForSubview.size.height);
+                            }
+                        }
 						existingAttachmentView.hidden = NO;
 						existingAttachmentView.frame = frameForSubview;
 						
@@ -337,6 +344,10 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 						}
 						else if (_delegateFlags.delegateSupportsCustomViewsForAttachments)
 						{
+                            if ((frameForSubview.origin.x + frameForSubview.size.width/2 - self.frame.size.width/2) < 0) {
+                                CGFloat xOffSet = self.frame.size.width/2 - frameForSubview.size.width/2;
+                                frameForSubview = CGRectMake(frameForSubview.origin.x + xOffSet, frameForSubview.origin.y, frameForSubview.size.width, frameForSubview.size.height);
+                            }
 							newCustomAttachmentView = [_delegate attributedTextContentView:self viewForAttachment:attachment frame:frameForSubview];
 						}
 						else if (_delegateFlags.delegateSupportsGenericCustomViews)

@@ -77,12 +77,46 @@ static NSCache *imageCache = nil;
 	// get base URL
 	NSURL *baseURL = [options objectForKey:NSBaseURLDocumentOption];
 	NSString *src = [element.attributes objectForKey:@"src"];
+    if (![src length]) {
+        src = [element.attributes objectForKey:@"data-src"];
+    }
 	
 	NSURL *contentURL = nil;
-	
+	NSString *imageIdentifer;
+    NSString *imageSizeDescription;
 	// decode content URL
 	if ([src length]) // guard against img with no src
 	{
+        NSRegularExpression *imageIdentiferRegex = [NSRegularExpression
+                                      regularExpressionWithPattern:@"((?!/)[^\\s?!/]+?)[.]"
+                                      options:0
+                                      error:nil];
+        NSUInteger numberOfImageIdentiferMatches = [imageIdentiferRegex numberOfMatchesInString:src
+                                                            options:0
+                                                              range:NSMakeRange(0, [src length])];
+        //    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
+        
+        if (numberOfImageIdentiferMatches > 0) {
+            NSArray *arrMatch = [imageIdentiferRegex matchesInString:src options:0 range:NSMakeRange(0, src.length)];
+            NSTextCheckingResult *imgContentUrl = arrMatch.firstObject;
+            imageIdentifer = [src substringWithRange:imgContentUrl.range];
+            
+        }
+        
+        if ([imageIdentifer length]) {
+            NSString *imageSizePattern = [NSString stringWithFormat:@"(?<=max/)\\d+"];
+            NSRegularExpression *imageSizeRegex = [NSRegularExpression
+                                                   regularExpressionWithPattern:imageSizePattern
+                                                   options:0
+                                                   error:nil];
+            NSTextCheckingResult *imageSizeMatch = [imageSizeRegex firstMatchInString:src
+                                                                              options:0
+                                                                                range:NSMakeRange(0, [src length])];
+            if (imageSizeMatch) {
+                imageSizeDescription = [src substringWithRange:imageSizeMatch.range];
+            }
+        }
+        
 		if ([src hasPrefix:@"data:"])
 		{
 			NSString *cleanStr = [[src componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] componentsJoinedByString:@""];
@@ -249,6 +283,18 @@ static NSCache *imageCache = nil;
 	
 	// only remote images should have a URL
 	_contentURL = contentURL;
+    _imageURLIdentifer = imageIdentifer;
+    _imageSizeIdentifer = imageSizeDescription;
+    if (_contentURL && _imageSizeIdentifer && ![self.contentURLsInfo.allKeys containsObject: _imageSizeIdentifer]) {
+        if ([self.contentURLsInfo.allKeys containsObject: _imageSizeIdentifer]) {
+            if (![[self.contentURLsInfo objectForKey:_imageSizeIdentifer] isEqual:_contentURL]) {
+                [self.contentURLsInfo setObject:_contentURL forKey:_imageSizeIdentifer];
+            }
+        }else{
+            [self.contentURLsInfo setObject:_contentURL forKey:_imageSizeIdentifer];
+        }
+    }
+
 }
 
 - (void)_updateSizesFromImage:(DTImage *)image
@@ -459,7 +505,7 @@ static NSCache *imageCache = nil;
 		if (_contentURL)
 		{
 			DTImage *image = [[DTImageTextAttachment sharedImageCache] objectForKey:[_contentURL absoluteString]];
-			
+            
 			// only local files can be loaded into cache
 			if (!image && [_contentURL isFileURL])
 			{

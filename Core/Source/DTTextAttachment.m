@@ -100,7 +100,7 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 		
 		// determine if there is a display size restriction
 		_maxImageSize = CGSizeZero;
-		
+//        _contentURLs = [NSMutableArray array];
 		NSValue *maxImageSizeValue =[options objectForKey:DTMaxImageSize];
 		if (maxImageSizeValue)
 		{
@@ -251,6 +251,18 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 	_displaySize = displaySize;
 }
 
+-(void)setImageURLIdentifer:(NSString *)imageURLIdentifer{
+    _imageURLIdentifer = imageURLIdentifer;
+}
+
+
+-(NSMutableDictionary *)contentURLsInfo{
+    if (!_contentURLsInfo) {
+        _contentURLsInfo = [NSMutableDictionary dictionary];
+    }
+    return _contentURLsInfo;
+}
+
 @synthesize originalSize = _originalSize;
 @synthesize displaySize = _displaySize;
 @synthesize contentURL = _contentURL;
@@ -259,4 +271,6 @@ static NSMutableDictionary *_classForTagNameLookup = nil;
 @synthesize verticalAlignment = _verticalAlignment;
 @synthesize hyperLinkGUID = hyperLinkGUID;
 
+@synthesize imageURLIdentifer = _imageURLIdentifer;
+@synthesize imageSizeIdentifer = _imageSizeIdentifer;
 @end

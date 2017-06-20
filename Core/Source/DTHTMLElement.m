@@ -4,7 +4,7 @@
 //
 //  Created by Oliver Drobnik on 4/14/11.
 //  Copyright 2011 Drobnik.com. All rights reserved.
-//
+//  Copy
 
 #import "DTHTMLElement.h"
 #import "DTAnchorHTMLElement.h"
@@ -36,6 +36,9 @@
 #import "UIFont+DTCoreText.h"
 #endif
 
+#define SCREEN_WIDTH ([[UIScreen mainScreen] respondsToSelector:@selector(nativeBounds)]?[UIScreen mainScreen].nativeBounds.size.width/[UIScreen mainScreen].nativeScale:[UIScreen mainScreen].bounds.size.width)
+#define SCREENH_HEIGHT ([[UIScreen mainScreen] respondsToSelector:@selector(nativeBounds)]?[UIScreen mainScreen].nativeBounds.size.height/[UIScreen mainScreen].nativeScale:[UIScreen mainScreen].bounds.size.height)
+#define SCREEN_SIZE ([[UIScreen mainScreen] respondsToSelector:@selector(nativeBounds)]?CGSizeMake([UIScreen mainScreen].nativeBounds.size.width/[UIScreen mainScreen].nativeScale,[UIScreen mainScreen].nativeBounds.size.height/[UIScreen mainScreen].nativeScale):[UIScreen mainScreen].bounds.size)
 @interface DTHTMLElement ()
 
 @property (nonatomic, strong) NSString *linkGUID;
@@ -255,6 +258,7 @@ NSDictionary *_classesForNames = nil;
 		else
 #endif
 		{
+            
 			CTParagraphStyleRef newParagraphStyle = [self.paragraphStyle createCTParagraphStyle];
 			[tmpDict setObject:CFBridgingRelease(newParagraphStyle) forKey:(id)kCTParagraphStyleAttributeName];
 		}
@@ -430,7 +434,22 @@ NSDictionary *_classesForNames = nil;
 		[attributedString addHTMLAttribute:key value:value range:entireString replaceExisting:NO];
 	}];
 }
-
+- (NSAttributedString *)attributedStringAddCustomParagraphStyleWithParagraphName:(NSString *)name andAttrString:(NSAttributedString *)attrString{
+    NSMutableAttributedString *tmpString = [[NSMutableAttributedString alloc]initWithAttributedString:attrString];
+    
+    NSRange paragraphRange = [[tmpString string] rangeOfParagraphAtIndex:[tmpString length]-1];
+    
+    CTParagraphStyleRef paraStyle = (__bridge CTParagraphStyleRef)[tmpString attribute:(id)kCTParagraphStyleAttributeName atIndex:paragraphRange.location effectiveRange:NULL];
+    
+    DTCoreTextParagraphStyle *paragraphStyle = [DTCoreTextParagraphStyle paragraphStyleWithCTParagraphStyle:paraStyle];
+    
+    //更新paraStyle
+    CTParagraphStyleRef newParaStyle = [paragraphStyle createTestCTParagraphStyle];
+    
+    // set new
+    [tmpString addAttribute:(id)kCTParagraphStyleAttributeName value:(__bridge_transfer id)newParaStyle range:paragraphRange];
+    return tmpString;
+}
 - (NSAttributedString *)attributedString
 {
 	@synchronized(self)
@@ -742,7 +761,26 @@ NSDictionary *_classesForNames = nil;
 	
 	return didModify;
 }
-
+- (void)setCustomParagraphStyle:(NSDictionary *)paraStyleInfo{
+    NSNumber *headIndent = [paraStyleInfo objectForKey:TKSCustomParaStyleHeadIndent];
+    if (headIndent) {
+        self.paragraphStyle.headIndent = headIndent.floatValue;
+        self.paragraphStyle.firstLineHeadIndent = self.paragraphStyle.headIndent;
+    }
+    NSNumber *tailIndent = [paraStyleInfo objectForKey:TKSCustomParaStyleTailIndent];
+    if (tailIndent) {
+        self.paragraphStyle.tailIndent = tailIndent.floatValue;
+    }
+    NSNumber *paragraphSpacing = [paraStyleInfo objectForKey:TKSCustomParaStyleParagraphSpacing];
+    if (paragraphSpacing) {
+        self.paragraphStyle.paragraphSpacing = paragraphSpacing.floatValue;
+    }
+    NSNumber *lineHeightMultiple = [paraStyleInfo objectForKey:TKSCustomParaStyleLineHeightMultiple];
+    if (lineHeightMultiple) {
+        self.paragraphStyle.lineHeightMultiple = lineHeightMultiple.floatValue;
+    }
+    
+}
 - (void)applyStyleDictionary:(NSDictionary *)styles
 {
 	if (![styles count])
@@ -1361,8 +1399,8 @@ NSDictionary *_classesForNames = nil;
 	{
 		hasPadding = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"-webkit-padding" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_padding] || hasPadding);
 	}
-	
-	if ([allKeys rangeOfString:@"padding"].length)
+    
+    if ([allKeys rangeOfString:@"padding"].length)
 	{
 		
 		hasPadding = ([self _parseEdgeInsetsFromStyleDictionary:styles forAttributesWithPrefix:@"padding" writingDirection:self.paragraphStyle.baseWritingDirection intoEdgeInsets:&_padding] || hasPadding);
@@ -1385,6 +1423,7 @@ NSDictionary *_classesForNames = nil;
 	
 	if (_displayStyle == DTHTMLElementDisplayStyleBlock)
 	{
+        
 		// we only care for margins of block level elements
 		if (hasMargins)
 		{
@@ -1396,7 +1435,7 @@ NSDictionary *_classesForNames = nil;
 			
 			// tailIndent from right side is negative
 			self.paragraphStyle.tailIndent -= _margins.right;
-		}
+        }
 		
 		if (needsTextBlock)
 		{
@@ -1406,7 +1445,7 @@ NSDictionary *_classesForNames = nil;
 			newBlock.padding = _padding;
 			
 			// transfer background color to block
-			newBlock.backgroundColor = _backgroundColor;
+            newBlock.backgroundColor = _backgroundColor;
 			_backgroundColor = nil;
 			
 			if (self.paragraphStyle.textBlocks)
@@ -1537,6 +1576,12 @@ NSDictionary *_classesForNames = nil;
 	_backgroundStrokeWidth = element.backgroundStrokeWidth;
 	_backgroundCornerRadius = element.backgroundCornerRadius;
 	
+//    if ([element.attributes.allKeys containsObject:@"data-width"]) {
+//        [self.attributes setValue:[element.attributes objectForKey:@"data-width"] forKey:@"width"];
+//    }
+//    if ([element.attributes.allKeys containsObject:@"data-height"]) {
+//        [self.attributes setValue:[element.attributes objectForKey:@"data-height"] forKey:@"height"];
+//    }
 	// only inherit background-color from inline elements
 	if (element.displayStyle == DTHTMLElementDisplayStyleInline || element.displayStyle == DTHTMLElementDisplayStyleListItem)
 	{

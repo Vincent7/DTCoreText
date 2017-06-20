@@ -128,10 +128,10 @@
 #else
 		_alignment = kCTNaturalTextAlignment;
 #endif
-		_lineHeightMultiple = 0.0;
-		_minimumLineHeight = 0.0;
-		_maximumLineHeight = 0.0;
-		_paragraphSpacing = 0.0;
+		_lineHeightMultiple = 1.2;
+		_paragraphSpacing = 10;
+        _headIndent = 10;
+        _tailIndent = -10;
 	}
 	
 	return self;
@@ -211,6 +211,42 @@
 	}
 
 	return ret;
+}
+- (CTParagraphStyleRef)createTestCTParagraphStyle
+{
+    // This just makes it that much easier to track down memory issues with tabstops
+    CFArrayRef stops = _tabStops ? CFArrayCreateCopy (NULL, (__bridge CFArrayRef)_tabStops) : NULL;
+    _paragraphSpacing = 100;
+    _headIndent = 0;
+    _tailIndent = 0;
+    CTParagraphStyleSetting settings[] =
+    {
+        {kCTParagraphStyleSpecifierAlignment, sizeof(_alignment), &_alignment},
+        {kCTParagraphStyleSpecifierFirstLineHeadIndent, sizeof(_firstLineHeadIndent), &_firstLineHeadIndent},
+        {kCTParagraphStyleSpecifierDefaultTabInterval, sizeof(_defaultTabInterval), &_defaultTabInterval},
+        
+        {kCTParagraphStyleSpecifierTabStops, sizeof(stops), &stops},
+        
+        {kCTParagraphStyleSpecifierParagraphSpacing, sizeof(_paragraphSpacing), &_paragraphSpacing},
+        {kCTParagraphStyleSpecifierParagraphSpacingBefore, sizeof(_paragraphSpacingBefore), &_paragraphSpacingBefore},
+        
+        {kCTParagraphStyleSpecifierHeadIndent, sizeof(_headIndent), &_headIndent},
+        {kCTParagraphStyleSpecifierTailIndent, sizeof(_tailIndent), &_tailIndent},
+        {kCTParagraphStyleSpecifierBaseWritingDirection, sizeof(_baseWritingDirection), &_baseWritingDirection},
+        {kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(_lineHeightMultiple), &_lineHeightMultiple},
+        
+        {kCTParagraphStyleSpecifierMinimumLineHeight, sizeof(_minimumLineHeight), &_minimumLineHeight},
+        {kCTParagraphStyleSpecifierMaximumLineHeight, sizeof(_maximumLineHeight), &_maximumLineHeight}
+    };
+    
+    CTParagraphStyleRef ret = CTParagraphStyleCreate(settings, 12);
+    
+    if (stops)
+    {
+        CFRelease(stops);
+    }
+    
+    return ret;
 }
 
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES

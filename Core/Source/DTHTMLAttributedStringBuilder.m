@@ -82,6 +82,7 @@
 	BOOL _ignoreParseEvents; // ignores events from parser after first HTML tag was finished
 	BOOL _ignoreInlineStyles; // ignores style blocks attached on elements
 	BOOL _preserverDocumentTrailingSpaces; // don't remove spaces at end of document
+    BOOL _ignoreParseCurrentElement;
 }
 
 - (id)initWithHTML:(NSData *)data options:(NSDictionary *)options documentAttributes:(NSDictionary * __autoreleasing*)docAttributes
@@ -225,7 +226,8 @@
 	if (defaultFontName) {
 		_defaultFontDescriptor.fontName = defaultFontName;
 	}
-
+    NSString *figcaptionStyleBlock = @"figcaption {display:block;} pre{display:block;background-color:#D2D2D2}";
+    [_globalStyleSheet parseStyleBlock:figcaptionStyleBlock];
 	
 	_defaultLinkColor = [_options objectForKey:DTDefaultLinkColor];
 	
@@ -277,33 +279,38 @@
 	
 	// default paragraph style
 	_defaultParagraphStyle = [DTCoreTextParagraphStyle defaultParagraphStyle];
+    NSDictionary *cusParagraphStyle = [_options objectForKey:DTCoreTextCustomParagraphStyleInfo];
+    if (cusParagraphStyle) {
+        
+    }else{
+        NSNumber *defaultLineHeightMultiplierNum = [_options objectForKey:DTDefaultLineHeightMultiplier];
+        
+        if (defaultLineHeightMultiplierNum)
+        {
+            CGFloat defaultLineHeightMultiplier = [defaultLineHeightMultiplierNum floatValue];
+            _defaultParagraphStyle.lineHeightMultiple = defaultLineHeightMultiplier;
+        }
+        
+        NSNumber *defaultTextAlignmentNum = [_options objectForKey:DTDefaultTextAlignment];
+        
+        if (defaultTextAlignmentNum)
+        {
+            _defaultParagraphStyle.alignment = (CTTextAlignment)[defaultTextAlignmentNum integerValue];
+        }
+        
+        NSNumber *defaultFirstLineHeadIndent = [_options objectForKey:DTDefaultFirstLineHeadIndent];
+        if (defaultFirstLineHeadIndent)
+        {
+            _defaultParagraphStyle.firstLineHeadIndent = [defaultFirstLineHeadIndent integerValue];
+        }
+        
+        NSNumber *defaultHeadIndent = [_options objectForKey:DTDefaultHeadIndent];
+        if (defaultHeadIndent)
+        {
+            _defaultParagraphStyle.headIndent = [defaultHeadIndent integerValue];
+        }
+    }
 	
-	NSNumber *defaultLineHeightMultiplierNum = [_options objectForKey:DTDefaultLineHeightMultiplier];
-	
-	if (defaultLineHeightMultiplierNum)
-	{
-		CGFloat defaultLineHeightMultiplier = [defaultLineHeightMultiplierNum floatValue];
-		_defaultParagraphStyle.lineHeightMultiple = defaultLineHeightMultiplier;
-	}
-	
-	NSNumber *defaultTextAlignmentNum = [_options objectForKey:DTDefaultTextAlignment];
-	
-	if (defaultTextAlignmentNum)
-	{
-		_defaultParagraphStyle.alignment = (CTTextAlignment)[defaultTextAlignmentNum integerValue];
-	}
-	
-	NSNumber *defaultFirstLineHeadIndent = [_options objectForKey:DTDefaultFirstLineHeadIndent];
-	if (defaultFirstLineHeadIndent)
-	{
-		_defaultParagraphStyle.firstLineHeadIndent = [defaultFirstLineHeadIndent integerValue];
-	}
-	
-	NSNumber *defaultHeadIndent = [_options objectForKey:DTDefaultHeadIndent];
-	if (defaultHeadIndent)
-	{
-		_defaultParagraphStyle.headIndent = [defaultHeadIndent integerValue];
-	}
 	
 	_defaultTag = [[DTHTMLElement alloc] init];
 	_defaultTag.fontDescriptor = _defaultFontDescriptor;
@@ -344,7 +351,9 @@
 	parser.delegate = (id)self;
 	
 	__block BOOL result;
-	dispatch_group_async(_dataParsingGroup, _dataParsingQueue, ^{ result = [parser parse]; });
+	dispatch_group_async(_dataParsingGroup, _dataParsingQueue, ^{
+        result = [parser parse];
+    });
 	
 	// wait until all string assembly is complete
 	dispatch_group_wait(_dataParsingGroup, DISPATCH_TIME_FOREVER);
@@ -645,7 +654,9 @@
 						if ([child.name isEqualToString:@"source"])
 						{
 							NSString *src = [child attributeForKey:@"src"];
-							
+                            if (![src length]) {
+                                src = [child attributeForKey:@"data-src"];
+                            }
 							// content URL
 							videoAttachment.contentURL = [NSURL URLWithString:src relativeToURL:_baseURL];
 							
@@ -694,22 +705,33 @@
 	
 	[ _tagEndHandlers setObject:[linkBlock copy] forKey:@"link"];
 }
-
+            
 #pragma mark DTHTMLParser Delegate
 
 - (void)parser:(DTHTMLParser *)parser didStartElement:(NSString *)elementName attributes:(NSDictionary *)attributeDict
 {
 	
 	dispatch_group_async(_treeBuildingGroup, _treeBuildingQueue, ^{
-		
+        
 		if (_ignoreParseEvents)
 		{
 			return;
 		}
-
-		DTHTMLElement *newNode = [DTHTMLElement elementWithName:elementName attributes:attributeDict options:_options];
+        NSMutableDictionary *inheritSizeAttributes = [NSMutableDictionary dictionaryWithDictionary:attributeDict];
+        if([_currentTag.attributes.allKeys containsObject:@"data-width"]){
+            [inheritSizeAttributes setObject:[_currentTag.attributes objectForKey:@"data-width"] forKey:@"width"];
+        }
+        if([_currentTag.attributes.allKeys containsObject:@"data-height"]){
+            [inheritSizeAttributes setObject:[_currentTag.attributes objectForKey:@"data-height"] forKey:@"height"];
+        }
+		DTHTMLElement *newNode = [DTHTMLElement elementWithName:elementName attributes:inheritSizeAttributes options:_options];
 		DTHTMLElement *previousLastChild = nil;
 		
+        _ignoreParseCurrentElement = NO;
+        NSString *class = [attributeDict objectForKey:@"class"];
+        if(class && [[self elementClassShouldIgnore] containsObject:class]){
+            _ignoreParseCurrentElement = YES;
+        }
 		if (_currentTag)
 		{
 			// inherit stuff
@@ -719,6 +741,26 @@
 			previousLastChild = [_currentTag.childNodes lastObject];
 			
 			// add as new child of current node
+            NSMutableArray *imageNodes = [NSMutableArray arrayWithArray:_currentTag.childNodes];
+            [imageNodes addObjectsFromArray:_currentTag.parentNode.childNodes];
+            
+            NSString *imageSizeIdentifer = newNode.textAttachment.imageSizeIdentifer;
+            for (DTHTMLElement *imageElement in imageNodes) {
+                
+                if([imageElement isKindOfClass:[DTTextAttachmentHTMLElement class]] && [imageElement.textAttachment.imageURLIdentifer isEqualToString:newNode.textAttachment.imageURLIdentifer]){
+                    NSMutableDictionary *tmpContentURLsInfo = [NSMutableDictionary dictionaryWithDictionary:imageElement.textAttachment.contentURLsInfo];
+                    if(![tmpContentURLsInfo.allKeys containsObject:imageSizeIdentifer]){
+                        [tmpContentURLsInfo setObject:newNode.textAttachment.contentURL forKey:imageSizeIdentifer];
+                        imageElement.textAttachment.contentURLsInfo = tmpContentURLsInfo;
+                    }
+                    _ignoreParseCurrentElement = YES;
+                    break;
+                }
+            }
+            
+//            if(!_ignoreParseCurrentElement){
+//                
+//            }
 			[_currentTag addChildNode:newNode];
 			
 			// remember body node
@@ -753,8 +795,16 @@
 		if (mergedStyles)
 		{
 			[newNode applyStyleDictionary:mergedStyles];
-			
-			// do not add the matched class names to 'class' custom attribute 
+            NSDictionary *allCustomParagraphStyle = [_options objectForKey:DTCoreTextCustomParagraphStyleInfo];
+            if(allCustomParagraphStyle){
+                NSDictionary *currentParagraphStyle = [allCustomParagraphStyle objectForKey:newNode.name];
+                if(currentParagraphStyle){
+                    [newNode setCustomParagraphStyle:currentParagraphStyle];
+                }
+            }
+            
+            
+			// do not add the matched class names to 'class' custom attribute
 			if (matchedSelectors)
 			{
 				NSMutableSet *classNamesToIgnoreForCustomAttributes = [NSMutableSet set];
@@ -794,16 +844,16 @@
 				}
 			}
 		}
-		
 		_currentTag = newNode;
-		
+
+        void (^tagBlock)(void) = [_tagStartHandlers objectForKey:elementName];
+        
+        if (tagBlock)
+        {
+            tagBlock();
+        }
 		// find block to execute for this tag if any
-		void (^tagBlock)(void) = [_tagStartHandlers objectForKey:elementName];
 		
-		if (tagBlock)
-		{
-			tagBlock();
-		}
 	});
 }
 
@@ -844,7 +894,7 @@
 							}
 							
 							NSAttributedString *nodeString = [theTag attributedString];
-							
+                            
 							if (nodeString)
 							{
 								// if this is a block element then we need a paragraph break before it
@@ -889,9 +939,17 @@
 			{
 				_ignoreParseEvents = YES;
 			}
-			
+            
+            DTHTMLElement *lastTag = _currentTag;
+            
+            
 			// go back up a level
 			_currentTag = [_currentTag parentElement];
+            
+            if(_ignoreParseCurrentElement && [lastTag isKindOfClass:[DTTextAttachmentHTMLElement class]]){
+                [_currentTag removeChildNode:lastTag];
+                _ignoreParseCurrentElement = NO;
+            }
 		}
 	});
 }
@@ -998,7 +1056,9 @@
 		}
 	});
 }
-
+- (NSArray *)elementClassShouldIgnore{
+    return @[@"graf-dropCapImage"];
+}
 #pragma mark Properties
 
 @synthesize willFlushCallback = _willFlushCallback;

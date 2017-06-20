@@ -340,5 +340,6 @@
  @returns `YES` if it still requires output
  */
 - (BOOL)needsOutput;
-
+- (void)setCustomParagraphStyle:(NSDictionary *)paraStyleInfo;
+- (NSAttributedString *)attributedStringAddCustomParagraphStyleWithParagraphName:(NSString *)name andAttrString:(NSAttributedString *)attrString;
 @end
