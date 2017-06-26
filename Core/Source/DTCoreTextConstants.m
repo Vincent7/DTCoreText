@@ -100,6 +100,9 @@ NSString * const TKSCustomParaStyleParagraphSpacing = @"TKSCustomParaStyleParagr
  */
 NSString * const TKSCustomParaStyleLineHeightMultiple = @"TKSCustomParaStyleLineHeightMultiple";
 
+NSString * const TKSCustomParaStyleTextColorHex = @"TKSCustomParaStyleTextColorHex";
+NSString * const TKSCustomParaStyleFontName = @"TKSCustomParaStyleFontName";
+NSString * const TKSCustomParaStyleFontSize = @"TKSCustomParaStyleFontSize";
 
 /**
  The minimum height in points that any line in the receiver will occupy, regardless of the font size or size of any attached graphic. This value is always nonnegative.

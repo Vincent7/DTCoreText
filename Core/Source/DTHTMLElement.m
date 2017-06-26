@@ -140,7 +140,15 @@ NSDictionary *_classesForNames = nil;
 		// remember original paragraphSpacing
 		[tmpDict setObject:DTNSNumberFromCGFloat(self.paragraphStyle.paragraphSpacing) forKey:DTAttachmentParagraphSpacingAttribute];
 	}
-	
+//    if (<#condition#>) {
+//        <#statements#>
+//    }
+//    NSNumber *lineHeightMultiple = [paraStyleInfo objectForKey:TKSCustomParaStyleLineHeightMultiple];
+//    if (lineHeightMultiple) {
+//        self.paragraphStyle.lineHeightMultiple = lineHeightMultiple.floatValue;
+//    }
+//    self.fontDescriptor.fontName = @"Raleway-Italic";
+//    self.fontDescriptor.italicTrait = YES;
 	CTFontRef font = [_fontDescriptor newMatchingFont];
 	
 	if (font)
@@ -779,7 +787,21 @@ NSDictionary *_classesForNames = nil;
     if (lineHeightMultiple) {
         self.paragraphStyle.lineHeightMultiple = lineHeightMultiple.floatValue;
     }
+    NSString *fontName = [paraStyleInfo objectForKey:TKSCustomParaStyleFontName];
+    if (fontName) {
+        self.fontDescriptor.fontName = fontName;
+    }
+    NSNumber *fontSize = [paraStyleInfo objectForKey:TKSCustomParaStyleFontSize];
+    if (fontSize) {
+        self.fontDescriptor.pointSize = fontSize.floatValue;
+    }
+    NSString *textColor = [paraStyleInfo objectForKey:TKSCustomParaStyleTextColorHex];
+    if (textColor) {
+        self.textColor = DTColorCreateWithHTMLName(textColor);
+    }
     
+//    self.fontDescriptor.italicTrait = YES;
+        
 }
 - (void)applyStyleDictionary:(NSDictionary *)styles
 {

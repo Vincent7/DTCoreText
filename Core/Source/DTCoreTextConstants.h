@@ -156,7 +156,9 @@ extern NSString * const TKSCustomParaStyleHeadIndent;
  */
 extern NSString * const TKSCustomParaStyleAlignment;
 
-
+extern NSString * const TKSCustomParaStyleTextColorHex;
+extern NSString * const TKSCustomParaStyleFontName;
+extern NSString * const TKSCustomParaStyleFontSize;
 /**
  The base writing direction for the receiver.
  

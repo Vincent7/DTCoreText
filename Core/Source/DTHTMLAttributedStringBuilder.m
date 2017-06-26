@@ -226,8 +226,11 @@
 	if (defaultFontName) {
 		_defaultFontDescriptor.fontName = defaultFontName;
 	}
-    NSString *figcaptionStyleBlock = @"figcaption {display:block;} pre{display:block;background-color:#D2D2D2}";
+    NSString *figcaptionStyleBlock = @"figcaption {display:block;} pre{display:block;} blockquote {display:block;}";
     [_globalStyleSheet parseStyleBlock:figcaptionStyleBlock];
+    
+//    NSString *blockquoteStyleBlock = @"blockquote {display:block;} pre{display:block;background-color:#D2D2D2}";
+//    [_globalStyleSheet parseStyleBlock:blockquoteStyleBlock];
 	
 	_defaultLinkColor = [_options objectForKey:DTDefaultLinkColor];
 	

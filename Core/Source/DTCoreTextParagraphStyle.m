@@ -203,7 +203,7 @@
 		{kCTParagraphStyleSpecifierMaximumLineHeight, sizeof(_maximumLineHeight), &_maximumLineHeight}
 	};	
 	
-	CTParagraphStyleRef ret = CTParagraphStyleCreate(settings, 12);
+	CTParagraphStyleRef ret = CTParagraphStyleCreate(settings, 14);
 	
 	if (stops)
 	{

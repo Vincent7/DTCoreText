@@ -81,6 +81,9 @@
 	
 	BOOL _shouldProcessCustomHTMLAttributes;
 }
+@property (nonatomic, copy) NSString *customFontName;
+@property (nonatomic, assign) CGFloat customFontSize;
+
 
 /**
  @name Creating HTML Elements
