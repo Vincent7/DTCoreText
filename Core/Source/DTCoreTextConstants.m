@@ -57,7 +57,7 @@ NSString * const DTBackgroundStrokeColorAttribute = @"DTBackgroundStrokeColor";
 NSString * const DTBackgroundStrokeWidthAttribute = @"DTBackgroundStrokeWidth";
 NSString * const DTBackgroundCornerRadiusAttribute = @"DTBackgroundCornerRadius";
 
-
+NSString * const DTVJParagraphIdentiferName = @"DTVJParagraphIdentiferName";
 // field constants
 NSString * const DTListPrefixField = @"{listprefix}";
 

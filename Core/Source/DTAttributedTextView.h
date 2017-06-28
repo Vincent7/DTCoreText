@@ -7,7 +7,7 @@
 //
 
 #import "DTAttributedTextContentView.h"
-
+#import "DTParagraphMarkManager.h"
 @class DTAttributedTextView;
 
 /**
@@ -30,13 +30,13 @@
  The attributed text to be displayed in the text content view of the receiver.
  */
 @property (nonatomic, strong) NSAttributedString *attributedString;
-
+@property (nonatomic, strong) NSDictionary *paraIdentiferIndexInfo;
 
 /**
  A delegate implementing DTAttributedTextContentViewDelegate to provide custom subviews for images and links.
  */
 @property (nonatomic, DT_WEAK_PROPERTY) IBOutlet id <DTAttributedTextContentViewDelegate> textDelegate;
-
+@property (nonatomic, strong) DTParagraphMarkManager *paraMarkManager;
 
 /**
  Performs a new layout pass on the receiver. This destroys the frame setter, calls relayoutText on the content view and marks the receiver as needing layout so that custom subviews get appropriately sized.

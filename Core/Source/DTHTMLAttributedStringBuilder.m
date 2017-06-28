@@ -484,7 +484,12 @@
 	
 	[_tagStartHandlers setObject:[listBlock copy] forKey:@"ul"];
 	[_tagStartHandlers setObject:[listBlock copy] forKey:@"ol"];
-	
+    void (^identiferBlock)(void) = ^
+    {
+        if([_currentTag attributeForKey:@"name"])
+            _currentTag.paragraphIdentiferName = [_currentTag attributeForKey:@"name"];
+    };
+    [_tagStartHandlers setObject:[identiferBlock copy] forKey:@"paragraphIdentifer"];
 	void (^h1Block)(void) = ^
 	{
 		_currentTag.headerLevel = 1;
@@ -855,6 +860,12 @@
         {
             tagBlock();
         }
+        void (^identiferBlock)(void) = [_tagStartHandlers objectForKey:@"paragraphIdentifer"];
+        
+        if (identiferBlock)
+        {
+            identiferBlock();
+        }
 		// find block to execute for this tag if any
 		
 	});
@@ -1000,7 +1011,14 @@
 		
 		// save it for later output
 		[_currentTag addChildNode:textNode];
-		
+        NSString *elementIdentifer = [_currentTag.attributes objectForKey:@"name"];
+        if(elementIdentifer && ![self.paragraphQuoteMarkObjectsInfo.allKeys containsObject:elementIdentifer]){
+            DTParagraphQuoteMarkObject *quoteMark = [[DTParagraphQuoteMarkObject alloc]initWithElement:_currentTag andIdentifer:elementIdentifer];
+            [self.paragraphQuoteMarkObjectsInfo setObject:quoteMark forKey:elementIdentifer];
+//            _currentTag.paragraphIdentiferName = elementIdentifer;
+        }
+        
+        
 		DTHTMLElement *theTag = _currentTag;
 		
 		// text directly contained in body needs to be output right away
@@ -1059,9 +1077,16 @@
 		}
 	});
 }
+- (NSMutableDictionary *)paragraphQuoteMarkObjectsInfo{
+    if(!_paragraphQuoteMarkObjectsInfo){
+        _paragraphQuoteMarkObjectsInfo = [NSMutableDictionary dictionary];
+    }
+    return _paragraphQuoteMarkObjectsInfo;
+}
 - (NSArray *)elementClassShouldIgnore{
     return @[@"graf-dropCapImage"];
 }
+
 #pragma mark Properties
 
 @synthesize willFlushCallback = _willFlushCallback;

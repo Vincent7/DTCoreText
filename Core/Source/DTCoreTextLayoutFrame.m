@@ -38,7 +38,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	CGFloat _longestLayoutLineWidth;
 }
-
+-(NSMutableDictionary *)paraIdentiferInfo{
+    if (!_paraIdentiferInfo) {
+        _paraIdentiferInfo = [NSMutableDictionary dictionary];
+    }
+    return _paraIdentiferInfo;
+}
 // makes a frame for a specific part of the attributed string of the layouter
 - (id)initWithFrame:(CGRect)frame layouter:(DTCoreTextLayouter *)layouter range:(NSRange)range
 {
@@ -454,6 +459,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		CGFloat tailIndent = 0;
 		
 		// get the paragraph style at this index
+        NSString *paragraphIdentifer = [_attributedStringFragment attribute:DTVJParagraphIdentiferName atIndex:lineRange.location effectiveRange:NULL];
 		CTParagraphStyleRef paragraphStyle = (__bridge CTParagraphStyleRef)[_attributedStringFragment attribute:(id)kCTParagraphStyleAttributeName atIndex:lineRange.location effectiveRange:NULL];
 		
 		if (isAtBeginOfParagraph)
@@ -750,7 +756,10 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		// abort layout if we left the configured frame
 		CGFloat lineBottom = CGRectGetMaxY(newLine.frame);
-		
+        if (paragraphIdentifer && ![self.paraIdentiferInfo.allKeys containsObject:paragraphIdentifer]) {
+            
+            [self.paraIdentiferInfo setObject:@(newLineBaselineOrigin.y) forKey:paragraphIdentifer];
+        }
 		// screen bottom last line min padding
 		if (newLine.textBlocks.count > 0) {
 			DTTextBlock *lineTextBlock = newLine.textBlocks[0];

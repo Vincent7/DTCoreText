@@ -70,7 +70,7 @@ typedef NS_ENUM(NSUInteger, DTCoreTextLayoutFrameDrawingOptions)
 	NSAttributedString *_attributedStringFragment;
 }
 
-
+@property (nonatomic, strong) NSMutableDictionary *paraIdentiferInfo;
 /**
  @name Creating Layout Frames
  */

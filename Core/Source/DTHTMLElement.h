@@ -83,6 +83,7 @@
 }
 @property (nonatomic, copy) NSString *customFontName;
 @property (nonatomic, assign) CGFloat customFontSize;
+@property (nonatomic, copy) NSString *paragraphIdentiferName;
 
 
 /**

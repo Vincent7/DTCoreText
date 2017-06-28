@@ -159,6 +159,7 @@ extern NSString * const TKSCustomParaStyleAlignment;
 extern NSString * const TKSCustomParaStyleTextColorHex;
 extern NSString * const TKSCustomParaStyleFontName;
 extern NSString * const TKSCustomParaStyleFontSize;
+extern NSString * const DTVJParagraphIdentiferName;
 /**
  The base writing direction for the receiver.
  

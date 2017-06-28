@@ -147,7 +147,7 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
 	NSAttributedString *_truncationString;
 }
 
-
+@property (nonatomic, strong) NSDictionary *paraMarksInfo;
 /**
  @name Sizing
  */

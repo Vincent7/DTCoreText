@@ -919,7 +919,9 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 				[self invalidateAccessibilityElements];
 			}
 		}
-	
+        if (_layoutFrame.paraIdentiferInfo) {
+            self.paraMarksInfo = _layoutFrame.paraIdentiferInfo;
+        }
 		return _layoutFrame;
 	}
 }

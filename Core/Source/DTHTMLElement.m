@@ -140,15 +140,6 @@ NSDictionary *_classesForNames = nil;
 		// remember original paragraphSpacing
 		[tmpDict setObject:DTNSNumberFromCGFloat(self.paragraphStyle.paragraphSpacing) forKey:DTAttachmentParagraphSpacingAttribute];
 	}
-//    if (<#condition#>) {
-//        <#statements#>
-//    }
-//    NSNumber *lineHeightMultiple = [paraStyleInfo objectForKey:TKSCustomParaStyleLineHeightMultiple];
-//    if (lineHeightMultiple) {
-//        self.paragraphStyle.lineHeightMultiple = lineHeightMultiple.floatValue;
-//    }
-//    self.fontDescriptor.fontName = @"Raleway-Italic";
-//    self.fontDescriptor.italicTrait = YES;
 	CTFontRef font = [_fontDescriptor newMatchingFont];
 	
 	if (font)
@@ -314,7 +305,10 @@ NSDictionary *_classesForNames = nil;
 	{
 		[tmpDict setObject:[NSNumber numberWithInteger:_headerLevel] forKey:DTHeaderLevelAttribute];
 	}
-	
+    if (_paragraphIdentiferName) {
+        [tmpDict setObject:_paragraphIdentiferName forKey:DTVJParagraphIdentiferName];
+    }
+    
 	if (_paragraphStyle.textLists)
 	{
 		[tmpDict setObject:_paragraphStyle.textLists forKey:DTTextListsAttribute];
@@ -1572,7 +1566,7 @@ NSDictionary *_classesForNames = nil;
 	_paragraphStyle = [element.paragraphStyle copy];
 
 	_headerLevel = element.headerLevel;
-
+    _paragraphIdentiferName = element.paragraphIdentiferName;
 	_fontVariant = element.fontVariant;
 	_underlineStyle = element.underlineStyle;
 	_strikeOut = element.strikeOut;

@@ -7,7 +7,7 @@
 //
 
 #import <DTFoundation/DTHTMLParser.h>
-
+#import "DTParagraphQuoteMarkObject.h"
 @class DTHTMLElement;
 
 /**
@@ -65,7 +65,8 @@ typedef void(^DTHTMLAttributedStringBuilderWillFlushCallback)(DTHTMLElement *);
  @returns An `NSAttributedString` representing the HTML document passed in the initializer.
  */
 - (NSAttributedString *)generatedAttributedString;
-
+@property (nonatomic, strong) NSMutableDictionary *paragraphQuoteMarkObjectsInfo;
+//- (NSMutableArray *)paragraphQuoteMarkObjectList;
 
 /**
  This block is called before the element is written to the output attributed string

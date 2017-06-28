@@ -178,11 +178,19 @@
 		{
 			_attributedTextContentView.frame = optimalFrame;
 			self.contentSize = [_attributedTextContentView intrinsicContentSize];
+            NSDictionary *paraMarksInfo = [self.paraMarkManager generateParaMarksInfoWithOriginsInfo:_attributedTextContentView.paraMarksInfo andElementsInfo:self.paraIdentiferIndexInfo];
+            [self.paraMarkManager updateParaMarksInfoWithDictionary:paraMarksInfo];
 		}
 	});
 }
 
 #pragma mark Properties
+-(DTParagraphMarkManager *)paraMarkManager{
+    if (!_paraMarkManager) {
+        _paraMarkManager = [[DTParagraphMarkManager alloc]initWithParaMarks:[NSDictionary dictionary]];
+    }
+    return _paraMarkManager;
+}
 - (DTAttributedTextContentView *)attributedTextContentView
 {
 	if (!_attributedTextContentView)
