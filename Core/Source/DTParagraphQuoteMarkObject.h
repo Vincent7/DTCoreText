@@ -13,5 +13,6 @@
 @property (nonatomic, copy) NSString *elementIdentifer;
 @property (nonatomic, strong) DTHTMLElement *element;
 @property (nonatomic, assign) CGFloat elementLayoutOriginY;
+@property (nonatomic, assign) NSRange elementRange;
 -(DTParagraphQuoteMarkObject *)initWithElement:(DTHTMLElement *)element andIdentifer:(NSString *)elementIdentifer;
 @end

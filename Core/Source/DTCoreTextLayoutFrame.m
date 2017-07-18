@@ -44,6 +44,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
     }
     return _paraIdentiferInfo;
 }
+-(NSMutableDictionary *)paraLocationsInfo{
+    if (!_paraLocationsInfo) {
+        _paraLocationsInfo = [NSMutableDictionary dictionary];
+    }
+    return _paraLocationsInfo;
+}
 // makes a frame for a specific part of the attributed string of the layouter
 - (id)initWithFrame:(CGRect)frame layouter:(DTCoreTextLayouter *)layouter range:(NSRange)range
 {
@@ -760,6 +766,19 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
             
             [self.paraIdentiferInfo setObject:@(newLineBaselineOrigin.y) forKey:paragraphIdentifer];
         }
+        if (paragraphIdentifer) {
+            NSValue *rangeValue = [NSValue valueWithRange:currentParagraphRange];
+            if ([self.paraLocationsInfo.allKeys containsObject:paragraphIdentifer]) {
+                NSRange tmpParaRange = [[self.paraLocationsInfo objectForKey:paragraphIdentifer] rangeValue];
+                NSRange unionRange = NSUnionRange(tmpParaRange, currentParagraphRange);
+                if (unionRange.length > 0) {
+                    rangeValue = [NSValue valueWithRange:unionRange];
+                }
+                
+            }
+            [self.paraLocationsInfo setObject:rangeValue forKey:paragraphIdentifer];
+            
+        }
 		// screen bottom last line min padding
 		if (newLine.textBlocks.count > 0) {
 			DTTextBlock *lineTextBlock = newLine.textBlocks[0];
@@ -1138,7 +1157,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			CGColorRef color = [textBlock.backgroundColor CGColor];
 			CGContextSetFillColorWithColor(context, color);
 			CGContextFillRect(context, frame);
-		}
+        }
 	}
 	
 	if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)

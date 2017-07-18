@@ -88,7 +88,7 @@ static NSCache *imageCache = nil;
 	if ([src length]) // guard against img with no src
 	{
         NSRegularExpression *imageIdentiferRegex = [NSRegularExpression
-                                      regularExpressionWithPattern:@"((?!/)[^\\s?!/]+?)[.]"
+                                      regularExpressionWithPattern:@"((?!/)[^\\s?!/]+?)[.](jpg|png|gif|jpeg|tiff)"
                                       options:0
                                       error:nil];
         NSUInteger numberOfImageIdentiferMatches = [imageIdentiferRegex numberOfMatchesInString:src

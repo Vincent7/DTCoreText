@@ -28,6 +28,13 @@
 	}
 	return 0;
 }
+-(NSRange)getParaLocationRangeWithIdentifer:(NSString * _Nonnull)identifer{
+    DTParagraphQuoteMarkObject* markObject = [self getParaMarkWithIdentifer:identifer];
+    if (markObject) {
+        return markObject.elementRange;
+    }
+    return NSMakeRange(0, 0);
+}
 -(DTParagraphQuoteMarkObject *)getParaMarkWithIdentifer:(NSString * _Nonnull)identifer{
 	if ([self.paraMarksInfo.allKeys containsObject:identifer]) {
 		DTParagraphQuoteMarkObject *markObject = [self.paraMarksInfo objectForKey:identifer];
@@ -42,7 +49,7 @@
 	return _paraMarksInfo;
 }
 
-- (NSDictionary *_Nullable)generateParaMarksInfoWithOriginsInfo:(NSDictionary <NSString*, NSNumber*>*_Nullable)originsInfo andElementsInfo:(NSDictionary <NSString *,DTParagraphQuoteMarkObject *>* _Nullable)elementsInfo;{
+- (NSDictionary *_Nullable)generateParaMarksInfoWithOriginsInfo:(NSDictionary <NSString*, NSNumber*>*_Nullable)originsInfo andParaLocationsInfo:(NSDictionary <NSString*, NSValue*>*_Nullable)locationsInfo andElementsInfo:(NSDictionary <NSString *,DTParagraphQuoteMarkObject *>* _Nullable)elementsInfo;{
     NSDictionary *paraMarksInfo;
     if (!elementsInfo) {
         paraMarksInfo = [NSDictionary dictionary];
@@ -51,10 +58,14 @@
     }
     
     [paraMarksInfo enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, DTParagraphQuoteMarkObject * _Nonnull obj, BOOL * _Nonnull stop) {
+        DTParagraphQuoteMarkObject * paraMark = obj;
         if ([originsInfo.allKeys containsObject:key]) {
             CGFloat paraMarkOriginY = [[originsInfo objectForKey:key] floatValue];
-            DTParagraphQuoteMarkObject * paraMark = obj;
             paraMark.elementLayoutOriginY = paraMarkOriginY;
+        }
+        if ([locationsInfo.allKeys containsObject:key]) {
+            NSRange paraRange = [[locationsInfo objectForKey:key] rangeValue];
+            paraMark.elementRange = paraRange;
         }
     }];
     return paraMarksInfo;

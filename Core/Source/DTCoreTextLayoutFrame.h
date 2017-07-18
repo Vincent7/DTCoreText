@@ -71,6 +71,7 @@ typedef NS_ENUM(NSUInteger, DTCoreTextLayoutFrameDrawingOptions)
 }
 
 @property (nonatomic, strong) NSMutableDictionary *paraIdentiferInfo;
+@property (nonatomic, strong) NSMutableDictionary *paraLocationsInfo;
 /**
  @name Creating Layout Frames
  */

@@ -66,7 +66,6 @@ extern NSString * const DTLazyImageViewDidFinishDownloadNotification;
  Set to `YES` to support progressive display of progressive downloads
  */
 @property (nonatomic, assign) BOOL shouldShowProgressiveDownload;
-
 /**
  The delegate, conforming to <DTLazyImageViewDelegate>, to inform when the image dimensions were determined
  */
@@ -80,6 +79,7 @@ extern NSString * const DTLazyImageViewDidFinishDownloadNotification;
 /**
  Cancels the image downloading
  */
+- (void)restartLoadImage;
 - (void)cancelLoading;
 
 @end

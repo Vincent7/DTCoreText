@@ -8,6 +8,7 @@
 
 #import "DTAttributedTextContentView.h"
 #import "DTParagraphMarkManager.h"
+#import "VJResponderChangeableScrollView.h"
 @class DTAttributedTextView;
 
 /**
@@ -16,7 +17,7 @@
  The content view of type <DTAttributedTextContentView> is created lazily. You should not set values on it directly if you use it in conjunction with this class for scrolling.
  */
 
-@interface DTAttributedTextView : UIScrollView
+@interface DTAttributedTextView : VJResponderChangeableScrollView
 {
 	// ivars needed by subclasses
 	DTAttributedTextContentView *_attributedTextContentView;
@@ -42,7 +43,7 @@
  Performs a new layout pass on the receiver. This destroys the frame setter, calls relayoutText on the content view and marks the receiver as needing layout so that custom subviews get appropriately sized.
  */
 - (void)relayoutText;
-
+- (void)updateTextAttributeAtRange:(NSRange)textRange andAttribute:(NSDictionary *)attributes;
 /**
  @name Accessing Subviews
  */

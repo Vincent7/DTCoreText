@@ -61,7 +61,34 @@
   
   [super layoutSubviews];
 }
-
+- (void)updateTextAttributeAtRange:(NSRange)textRange andAttribute:(NSDictionary *)attributes{
+//    self.attributedString
+    NSMutableAttributedString *tmpAttributedString = [[NSMutableAttributedString alloc]initWithAttributedString:self.attributedString];
+    [tmpAttributedString addAttributes:attributes range:textRange];
+//    self.attributedString = tmpAttributedString;
+    _attributedTextContentView.attributedString = tmpAttributedString;
+//    CGRect rectNeedUpdate = CGRectMake(self.bounds.origin.x,
+//                                       self.bounds.origin.y,
+//                                       self.bounds.size.width,
+//                                       self.bounds.size.height);
+//    [_attributedTextContentView updateAttributedStringWithoutUpdatingLayout:tmpAttributedString inRect:rectNeedUpdate];
+//    DTBlockPerformSyncIfOnMainThreadElseAsync(^{
+//        
+//        // need to reset the layouter because otherwise we get the old framesetter or cached layout frames
+//        _attributedTextContentView.layouter=nil;
+//        
+//        // here we're layouting the entire string, might be more efficient to only relayout the paragraphs that contain these attachments
+//        [_attributedTextContentView relayoutText];
+//        
+//        // layout custom subviews for visible area
+//        [self setNeedsLayout];
+//    });
+//    [_attributedTextContentView relayoutText];
+//    [_attributedTextContentView layoutSubviewsInRect:CGRectMake(self.bounds.origin.x,
+//                                                                self.bounds.origin.y,
+//                                                                self.bounds.size.width,
+//                                                                self.bounds.size.height/2)];
+}
 - (void)awakeFromNib
 {
 	[super awakeFromNib];
@@ -178,7 +205,7 @@
 		{
 			_attributedTextContentView.frame = optimalFrame;
 			self.contentSize = [_attributedTextContentView intrinsicContentSize];
-            NSDictionary *paraMarksInfo = [self.paraMarkManager generateParaMarksInfoWithOriginsInfo:_attributedTextContentView.paraMarksInfo andElementsInfo:self.paraIdentiferIndexInfo];
+            NSDictionary *paraMarksInfo = [self.paraMarkManager generateParaMarksInfoWithOriginsInfo:_attributedTextContentView.paraMarksInfo andParaLocationsInfo:_attributedTextContentView.paraLocationInfo andElementsInfo:self.paraIdentiferIndexInfo];
             [self.paraMarkManager updateParaMarksInfoWithDictionary:paraMarksInfo];
 		}
 	});

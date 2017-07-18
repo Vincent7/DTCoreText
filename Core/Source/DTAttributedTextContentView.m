@@ -531,10 +531,10 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 			[self setNeedsLayout];
 			[self setNeedsDisplayInRect:self.bounds];
 			
-			if ([self respondsToSelector:@selector(invalidateIntrinsicContentSize)])
-			{
-            [self invalidateIntrinsicContentSize];
-			}
+            if ([self respondsToSelector:@selector(invalidateIntrinsicContentSize)])
+            {
+                [self invalidateIntrinsicContentSize];
+            }
 		}
 	});
 }
@@ -683,7 +683,40 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		}
 	}
 }
-
+- (void)updateAttributedStringWithoutUpdatingLayout:(NSAttributedString *)string inRect:(CGRect)rect{
+    self.layouter.attributedString = string;
+    _attributedString = [string copy];
+//    [self layoutSubviewsInRect:rect];
+    DTBlockPerformSyncIfOnMainThreadElseAsync(^{
+        
+        // Make sure we actually have a superview and a previous layout before attempting to relayout the text.
+        if (_layoutFrame && self.superview)
+        {
+            self.layoutFrame = nil;
+            
+            // remove all links because they might have merged or split
+            [self removeAllCustomViewsForLinks];
+            if (_attributedString)
+            {
+                // triggers new layout
+                CGSize neededSize = [self intrinsicContentSize];
+                
+                CGRect optimalFrame = CGRectMake(self.frame.origin.x, self.frame.origin.y, neededSize.width, neededSize.height);
+                NSDictionary *userInfo = [NSDictionary dictionaryWithObject:[NSValue valueWithCGRect:optimalFrame] forKey:@"OptimalFrame"];
+                
+                [[NSNotificationCenter defaultCenter] postNotificationName:DTAttributedTextContentViewDidFinishLayoutNotification object:self userInfo:userInfo];
+            }
+            
+            [self setNeedsLayout];
+            [self setNeedsDisplayInRect:rect];
+            
+            if ([self respondsToSelector:@selector(invalidateIntrinsicContentSize)])
+            {
+                [self invalidateIntrinsicContentSize];
+            }
+        }
+    });
+}
 - (void)setAttributedString:(NSAttributedString *)string
 {
 	if (_attributedString != string)
@@ -921,6 +954,9 @@ static Class _layerClassToUseForDTAttributedTextContentView = nil;
 		}
         if (_layoutFrame.paraIdentiferInfo) {
             self.paraMarksInfo = _layoutFrame.paraIdentiferInfo;
+        }
+        if (_layoutFrame.paraLocationsInfo) {
+            self.paraLocationInfo = _layoutFrame.paraLocationsInfo;
         }
 		return _layoutFrame;
 	}

@@ -148,6 +148,7 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
 }
 
 @property (nonatomic, strong) NSDictionary *paraMarksInfo;
+@property (nonatomic, strong) NSDictionary *paraLocationInfo;
 /**
  @name Sizing
  */
@@ -236,7 +237,7 @@ typedef NSUInteger DTAttributedTextContentViewRelayoutMask;
  The attributed string to display in the receiver
  */
 @property (nonatomic, copy) NSAttributedString *attributedString;
-
+- (void)updateAttributedStringWithoutUpdatingLayout:(NSAttributedString *)string inRect:(CGRect)rect;
 
 /**
  The delegate that is in charge of supplying custom behavior for the receiver. It must conform to <DTAttributedTextContentViewDelegate> and provide custom subviews, link buttons, etc.

@@ -102,12 +102,12 @@ NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageVie
 	@autoreleasepool 
 	{
         if (![self.urlRequestsInfo.allKeys containsObject:url]) {
-            NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:url cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:60.0];
+            NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:url cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:30.0];
             [self.urlRequestsInfo setObject:urlRequest forKey:url];
         }else{
             NSMutableURLRequest *urlRequest = [self.urlRequestsInfo objectForKey:url];
             [urlRequest setCachePolicy:NSURLRequestReturnCacheDataElseLoad];
-            [urlRequest setTimeoutInterval:60.0];
+            [urlRequest setTimeoutInterval:30.0];
         }
         
         /*
@@ -154,23 +154,75 @@ NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageVie
     }
     return highestQualitySizeKey;
 }
+- (void)restartLoadImage{
+    self.image = nil;
+    if (!self.image && (self.imageUrlsInfo.count > 0 || self.urlRequestsInfo.count > 0)
+#if DTCORETEXT_USES_NSURLSESSION
+        /*&& self.arrDataTasks.count == 0*/
+#else
+        && !_connection
+#endif
+        /*&& self.superview*/)
+    {
+        //FIX: 需要有URL清晰度的描述字段
+        NSURL *lastImageUrl;
+        UIImage *image;
+        if ([self highestQualityImageSizeKeyCached]) {
+            lastImageUrl = [self.imageUrlsInfo objectForKey:[self highestQualityImageSizeKeyCached]];
+            if (!_imageCache) {
+                static dispatch_once_t predicate;
+                
+                dispatch_once(&predicate, ^{
+                    _imageCache = [[NSCache alloc] init];
+                });
+            }
+            
+            image = [_imageCache objectForKey:lastImageUrl.absoluteString];
+        }
+        
+        if (image)
+        {
+            self.image = image;
+            _fullWidth = image.size.width;
+            _fullHeight = image.size.height;
+            
+            // this has to be synchronous
+            [self _notifyDelegateWithImageUrl:lastImageUrl];
+            
+            return;
+        }
+        [self.imageUrlsInfo enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+            NSURL *imageUrl = obj;
+            [self loadImageAtURL:imageUrl];
+        }];
+        
+    }
+}
 - (void)didMoveToSuperview
 {
 	[super didMoveToSuperview];
 	
-	if (!self.image && (self.imageUrlsInfo.count > 0 || self.urlRequestsInfo.count > 0) &&
+	if (!self.image && (self.imageUrlsInfo.count > 0 || self.urlRequestsInfo.count > 0)
 #if DTCORETEXT_USES_NSURLSESSION
-		 self.arrDataTasks.count == 0
+		 /*&& self.arrDataTasks.count == 0*/
 #else
-		 !_connection
+		 && !_connection
 #endif
-		 && self.superview)
+		 /*&& self.superview*/)
 	{
         //FIX: 需要有URL清晰度的描述字段
         NSURL *lastImageUrl;
         UIImage *image;
         if ([self highestQualityImageSizeKeyCached]) {
             lastImageUrl = [self.imageUrlsInfo objectForKey:[self highestQualityImageSizeKeyCached]];
+            if (!_imageCache) {
+                static dispatch_once_t predicate;
+                
+                dispatch_once(&predicate, ^{
+                    _imageCache = [[NSCache alloc] init];
+                });
+            }
+            
             image = [_imageCache objectForKey:lastImageUrl.absoluteString];
         }
 
@@ -313,11 +365,14 @@ NSString * const DTLazyImageViewDidFinishDownloadNotification = @"DTLazyImageVie
         
         [self _notifyDelegateWithImageUrl:url];
         
-        static dispatch_once_t predicate;
+        if (!_imageCache) {
+            static dispatch_once_t predicate;
+            
+            dispatch_once(&predicate, ^{
+                _imageCache = [[NSCache alloc] init];
+            });
+        }
         
-        dispatch_once(&predicate, ^{
-            _imageCache = [[NSCache alloc] init];
-        });
         
         if (url)
         {
