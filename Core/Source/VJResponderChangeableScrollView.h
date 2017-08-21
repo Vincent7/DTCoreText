@@ -9,5 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface VJResponderChangeableScrollView : UIScrollView
-
+@property (nonatomic,assign) BOOL reading;
+//@property (nonatomic,weak) UIView* viewResponseGesture;
 @end

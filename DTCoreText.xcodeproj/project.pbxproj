@@ -739,6 +739,9 @@
 		BF72A0B31F03AD3800CC8034 /* DTParagraphMarkManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BF72A0B11F03AD3800CC8034 /* DTParagraphMarkManager.h */; };
 		BF72A0B41F03AD3800CC8034 /* DTParagraphMarkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BF72A0B21F03AD3800CC8034 /* DTParagraphMarkManager.m */; };
 		BF72A0B51F03AD3800CC8034 /* DTParagraphMarkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BF72A0B21F03AD3800CC8034 /* DTParagraphMarkManager.m */; };
+		BFC50A481F1E3DB20027D74C /* VJResponderChangeableScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = BFC50A461F1E3DB20027D74C /* VJResponderChangeableScrollView.h */; };
+		BFC50A491F1E3DB20027D74C /* VJResponderChangeableScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = BFC50A471F1E3DB20027D74C /* VJResponderChangeableScrollView.m */; };
+		BFC50A4A1F1E3DB20027D74C /* VJResponderChangeableScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = BFC50A471F1E3DB20027D74C /* VJResponderChangeableScrollView.m */; };
 		C2CDBAEC17CCD5E5000E4AD7 /* CSSOOMCrash.html in Resources */ = {isa = PBXBuildFile; fileRef = C2CDBADA17CCD245000E4AD7 /* CSSOOMCrash.html */; };
 		DDCCEB1E17005A4F009FF923 /* css.css in Resources */ = {isa = PBXBuildFile; fileRef = DDCCEB1D17005A4F009FF923 /* css.css */; };
 		E2262DC71638331500BFDAD7 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7F5671C14D8469000D1F167 /* Cocoa.framework */; };
@@ -1425,6 +1428,8 @@
 		BF72A05C1F02B89000CC8034 /* DTParagraphQuoteMarkObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTParagraphQuoteMarkObject.m; sourceTree = "<group>"; };
 		BF72A0B11F03AD3800CC8034 /* DTParagraphMarkManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTParagraphMarkManager.h; sourceTree = "<group>"; };
 		BF72A0B21F03AD3800CC8034 /* DTParagraphMarkManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTParagraphMarkManager.m; sourceTree = "<group>"; };
+		BFC50A461F1E3DB20027D74C /* VJResponderChangeableScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VJResponderChangeableScrollView.h; sourceTree = "<group>"; };
+		BFC50A471F1E3DB20027D74C /* VJResponderChangeableScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VJResponderChangeableScrollView.m; sourceTree = "<group>"; };
 		C2CDBADA17CCD245000E4AD7 /* CSSOOMCrash.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CSSOOMCrash.html; sourceTree = "<group>"; };
 		DDCCEB1D17005A4F009FF923 /* css.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = css.css; sourceTree = "<group>"; };
 		E2262DC61638331500BFDAD7 /* DTCoreText.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DTCoreText.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1857,6 +1862,8 @@
 				A788C91314863E8700E1AFD9 /* DTAttributedTextContentView.m */,
 				BF72A0B11F03AD3800CC8034 /* DTParagraphMarkManager.h */,
 				BF72A0B21F03AD3800CC8034 /* DTParagraphMarkManager.m */,
+				BFC50A461F1E3DB20027D74C /* VJResponderChangeableScrollView.h */,
+				BFC50A471F1E3DB20027D74C /* VJResponderChangeableScrollView.m */,
 				A788C91414863E8700E1AFD9 /* DTAttributedTextView.h */,
 				A788C91514863E8700E1AFD9 /* DTAttributedTextView.m */,
 				A788C92C14863E8700E1AFD9 /* DTLazyImageView.h */,
@@ -2276,6 +2283,7 @@
 				A79BA6B91B46A2700086C2F6 /* NSString+HTML.h in Headers */,
 				A79BA6731B46A24A0086C2F6 /* DTHTMLParserNode.h in Headers */,
 				A79BA69F1B46A2660086C2F6 /* DTCoreTextLayouter.h in Headers */,
+				BFC50A481F1E3DB20027D74C /* VJResponderChangeableScrollView.h in Headers */,
 				BF72A0B31F03AD3800CC8034 /* DTParagraphMarkManager.h in Headers */,
 				A79BA6791B46A24F0086C2F6 /* DTAnchorHTMLElement.h in Headers */,
 				A79BA69B1B46A2660086C2F6 /* DTCoreTextFontCollection.h in Headers */,
@@ -2966,6 +2974,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BFC50A491F1E3DB20027D74C /* VJResponderChangeableScrollView.m in Sources */,
 				BF72A0B41F03AD3800CC8034 /* DTParagraphMarkManager.m in Sources */,
 				A788CA5014863EF100E1AFD9 /* CoreTextDemoAppDelegate.m in Sources */,
 				A788CA5114863EF100E1AFD9 /* DemoSnippetsViewController.m in Sources */,
@@ -3215,6 +3224,7 @@
 				A79BA68A1B46A2530086C2F6 /* DTImage+HTML.m in Sources */,
 				A79BA6BE1B46A2700086C2F6 /* DTTextBlock.m in Sources */,
 				A7B130581B4B25E30014E109 /* DTAccessibilityViewProxy.m in Sources */,
+				BFC50A4A1F1E3DB20027D74C /* VJResponderChangeableScrollView.m in Sources */,
 				A79BA6B61B46A2700086C2F6 /* NSMutableAttributedString+HTML.m in Sources */,
 				A79BA6981B46A25A0086C2F6 /* DTObjectTextAttachment.m in Sources */,
 				A79BA67A1B46A24F0086C2F6 /* DTAnchorHTMLElement.m in Sources */,
