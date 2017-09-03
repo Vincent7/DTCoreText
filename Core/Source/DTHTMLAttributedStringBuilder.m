@@ -212,12 +212,10 @@
 	
 	NSString *defaultFontFamily = [_options objectForKey:DTDefaultFontFamily];
 	
-	if (defaultFontFamily)
-	{
+	if (defaultFontFamily){
 		_defaultFontDescriptor.fontFamily = defaultFontFamily;
 	}
-	else
-	{
+	else{
 		_defaultFontDescriptor.fontFamily = @"Times New Roman";
 	}
 

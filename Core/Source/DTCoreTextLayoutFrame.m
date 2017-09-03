@@ -428,6 +428,10 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
  */
 - (void)_buildLinesWithTypesetter
 {
+    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(didBeginLayout)]) {
+        [self.delegate didBeginLayout];
+    }
 	// framesetter keeps internal reference, no need to retain
 	CTTypesetterRef typesetter = CTFramesetterGetTypesetter(_framesetter);
 	
@@ -449,6 +453,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	NSUInteger fittingLength = 0;
 	BOOL shouldTruncateLine = NO;
 	
+    NSUInteger originParagraphsCount = paragraphRanges.count;
 	do  // for each line
 	{
 		while (lineRange.location >= (currentParagraphRange.location+currentParagraphRange.length))
@@ -457,6 +462,11 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			[paragraphRanges removeObjectAtIndex:0];
 			
 			currentParagraphRange = [[paragraphRanges objectAtIndex:0] rangeValue];
+            
+            if (self.delegate && [self.delegate respondsToSelector:@selector(didChangedLayoutProgress:)]) {
+                CGFloat progress = (originParagraphsCount - paragraphRanges.count)/originParagraphsCount;
+                [self.delegate didChangedLayoutProgress:progress];
+            }
 		}
 		
 		BOOL isAtBeginOfParagraph = (currentParagraphRange.location == lineRange.location);
@@ -806,11 +816,16 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		lineRange.location += lineRange.length;
 		previousLine = newLine;
+        
 	}
 	while (lineRange.location < maxIndex && !shouldTruncateLine);
 	
 	_lines = typesetLines;
 	
+    if (self.delegate && [self.delegate respondsToSelector:@selector(didFinishLayout)]) {
+        [self.delegate didFinishLayout];
+    }
+    
 	if (![_lines count])
 	{
 		// no lines fit

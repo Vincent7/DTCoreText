@@ -15,7 +15,7 @@
 #import <DTFoundation/DTTiledLayerWithoutFade.h>
 
 
-@interface DTAttributedTextView ()
+@interface DTAttributedTextView ()<DTCoreTextLayoutFrameDelegate>
 
 - (void)_setup;
 
@@ -248,7 +248,7 @@
 		}
 		
 		_attributedTextContentView = [[classToUse alloc] initWithFrame:frame];
-		
+		_attributedTextContentView.layoutFrame.delegate = self;
 		// restore previous layer class if we changed the layer class for the content view
 		if (previousLayerClass)
 		{
@@ -440,7 +440,18 @@
 	_shouldDrawImages = shouldDrawImages;
 	_attributedTextContentView.shouldDrawImages = _shouldDrawImages;
 }
+#pragma mark - DTCoreTextLayoutFrameDelegate
+-(void)didBeginLayout{
+    NSLog(@"Did Begin Layout");
+}
 
+-(void)didFinishLayout{
+    NSLog(@"Did Finish Layout");
+}
+
+-(void)didChangedLayoutProgress:(CGFloat)progress{
+    NSLog(@"Progress: %f",progress);
+}
 @synthesize attributedTextContentView = _attributedTextContentView;
 @synthesize attributedString = _attributedString;
 @synthesize textDelegate = _textDelegate;

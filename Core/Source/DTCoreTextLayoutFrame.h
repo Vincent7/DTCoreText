@@ -6,7 +6,12 @@
 //  Copyright 2011 Drobnik.com. All rights reserved.
 //
 
+@protocol DTCoreTextLayoutFrameDelegate <NSObject>
 
+- (void)didChangedLayoutProgress:(CGFloat)progress;
+- (void)didBeginLayout;
+- (void)didFinishLayout;
+@end
 #if TARGET_OS_IPHONE
 #import <CoreText/CoreText.h>
 #elif TARGET_OS_MAC
@@ -72,10 +77,10 @@ typedef NS_ENUM(NSUInteger, DTCoreTextLayoutFrameDrawingOptions)
 
 @property (nonatomic, strong) NSMutableDictionary *paraIdentiferInfo;
 @property (nonatomic, strong) NSMutableDictionary *paraLocationsInfo;
+@property (nonatomic, weak) id <DTCoreTextLayoutFrameDelegate> delegate;
 /**
  @name Creating Layout Frames
  */
-
 
 /**
  Creates a Layout Frame with the given frame using the attributed string loaded into the layouter.
